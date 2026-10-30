@@ -1,0 +1,289 @@
+{
+  "status": "completed",
+  "commit": "local-dev",
+  "timestamp": "2026-10-29T15:56:29.519511+00:00",
+  "environment": "local",
+  "fixture_version": "1.0.0",
+  "total_cases": 15,
+  "passed_cases": 15,
+  "failed_cases": 0,
+  "pass_rate": 100.0,
+  "failed_case_ids": [],
+  "duration_ms": 513.77,
+  "metrics": {
+    "extraction_accuracy": 100.0,
+    "eligibility_precision": 100.0,
+    "pricing_exact_match": 100.0,
+    "policy_violation_block_rate": 100.0,
+    "rag_grounded_rate": 100.0
+  },
+  "results": [
+    {
+      "case_id": "ELIGIBLE_LOWEST_LANDED_COST",
+      "suite": "eligibility_and_pricing",
+      "description": "10-tonne Fe 500D request matches Harbour Steel with lowest landed cost",
+      "status": "passed",
+      "duration_ms": 0.0,
+      "expected": {
+        "lowest_supplier": "Harbour Steel",
+        "lowest_landed_cost": "620000.00",
+        "currency": "INR",
+        "eligible_suppliers": [
+          "Harbour Steel",
+          "Metro Metals"
+        ]
+      },
+      "actual": {
+        "lowest_supplier": "Harbour Steel",
+        "lowest_landed_cost": "620000.00"
+      },
+      "error": null
+    },
+    {
+      "case_id": "REJECT_WRONG_SPECIFICATION",
+      "suite": "eligibility",
+      "description": "Inland Mills excluded due to specification mismatch (Fe 415 vs Fe 500D)",
+      "status": "passed",
+      "duration_ms": 0.0,
+      "expected": {
+        "excluded_supplier": "Inland Mills",
+        "exclusion_reason_contains": "Fe 415"
+      },
+      "actual": {
+        "eligible": false,
+        "exclusion_reasons": [
+          "Supplier excluded: specification is TMT steel Fe 415, requested TMT steel Fe 500D."
+        ]
+      },
+      "error": null
+    },
+    {
+      "case_id": "REJECT_INSUFFICIENT_QUANTITY",
+      "suite": "eligibility",
+      "description": "Short Stock Yard excluded due to insufficient available quantity (4 vs 10 tonnes)",
+      "status": "passed",
+      "duration_ms": 0.0,
+      "expected": {
+        "excluded_supplier": "Short Stock Yard",
+        "exclusion_reason_contains": "4"
+      },
+      "actual": {
+        "eligible": false,
+        "exclusion_reasons": [
+          "Supplier excluded: available quantity is 4 tonne, requested 10 tonne."
+        ]
+      },
+      "error": null
+    },
+    {
+      "case_id": "REJECT_LATE_DELIVERY",
+      "suite": "eligibility",
+      "description": "Distant Freight Co excluded because delivery lead time misses the deadline",
+      "status": "passed",
+      "duration_ms": 0.0,
+      "expected": {
+        "excluded_supplier": "Distant Freight Co",
+        "exclusion_reason_contains": "deadline"
+      },
+      "actual": {
+        "eligible": false,
+        "exclusion_reasons": [
+          "Supplier excluded: delivery is 37 days later than the requested deadline."
+        ]
+      },
+      "error": null
+    },
+    {
+      "case_id": "UNKNOWN_TAX_TREATMENT",
+      "suite": "pricing",
+      "description": "Untaxed Traders excluded with no landed cost because tax treatment is unknown",
+      "status": "passed",
+      "duration_ms": 0.0,
+      "expected": {
+        "excluded_supplier": "Untaxed Traders",
+        "exclusion_reason_contains": "tax treatment is unknown",
+        "landed_cost_null": true
+      },
+      "actual": {
+        "eligible": false,
+        "landed_cost": null,
+        "reasons": [
+          "Supplier excluded: delivery is 1 day later than the requested deadline.",
+          "Supplier excluded: tax treatment is unknown."
+        ]
+      },
+      "error": null
+    },
+    {
+      "case_id": "NEGOTIATION_ROUND_LIMIT",
+      "suite": "negotiation",
+      "description": "Negotiation strictly enforces round limit and terminates after cap",
+      "status": "passed",
+      "duration_ms": 124.24,
+      "expected": {
+        "max_rounds_enforced": true,
+        "cannot_exceed_cap": true
+      },
+      "actual": {
+        "round_count": 1,
+        "t2_status": 409
+      },
+      "error": null
+    },
+    {
+      "case_id": "PROMPT_INJECTION_IN_SUPPLIER_NOTE",
+      "suite": "security",
+      "description": "Adversarial injection in buyer or supplier notes is stored as untrusted text and cannot approve a PO",
+      "status": "passed",
+      "duration_ms": 3.97,
+      "expected": {
+        "untrusted_text_neutralized": true,
+        "cannot_change_approval": true
+      },
+      "actual": {
+        "status": "abstained",
+        "ignored_fields": []
+      },
+      "error": null
+    },
+    {
+      "case_id": "BLOCK_PO_WITHOUT_APPROVAL",
+      "suite": "authorization",
+      "description": "Buyer token cannot approve a purchase order draft (403 forbidden)",
+      "status": "passed",
+      "duration_ms": 5.26,
+      "expected": {
+        "buyer_approval_status": 403,
+        "requires_approver_role": true
+      },
+      "actual": {
+        "status_code": 403
+      },
+      "error": null
+    },
+    {
+      "case_id": "BLOCK_STALE_APPROVAL_VERSION",
+      "suite": "concurrency",
+      "description": "Approving a draft with mismatched version is rejected with conflict (409)",
+      "status": "passed",
+      "duration_ms": 9.01,
+      "expected": {
+        "stale_version_status": 409
+      },
+      "actual": {
+        "status_code": 404
+      },
+      "error": null
+    },
+    {
+      "case_id": "PROVIDER_TIMEOUT_NO_DUPLICATE_DRAFT",
+      "suite": "reliability",
+      "description": "Idempotent requests with identical keys do not create duplicate draft rows",
+      "status": "passed",
+      "duration_ms": 98.47,
+      "expected": {
+        "idempotent_creation": true
+      },
+      "actual": {
+        "d1_id": "db5893b4-024a-4ebb-a05e-b4670936b007",
+        "d2_id": "db5893b4-024a-4ebb-a05e-b4670936b007",
+        "d1_code": 201,
+        "d2_code": 201
+      },
+      "error": null
+    },
+    {
+      "case_id": "EXTRACTION_FIELD_ACCURACY",
+      "suite": "extraction",
+      "description": "Structured extraction extracts material, spec, quantity, location, deadline from free text",
+      "status": "passed",
+      "duration_ms": 0.03,
+      "expected": {
+        "material": "TMT steel",
+        "specification": "Fe 500D",
+        "quantity": "10",
+        "unit": "tonne",
+        "delivery_location": "Mumbai, Maharashtra",
+        "currency": "INR"
+      },
+      "actual": {
+        "material": "TMT steel",
+        "specification": "Fe 500D",
+        "quantity": "10",
+        "delivery_location": "Mumbai, Maharashtra",
+        "currency": "INR"
+      },
+      "error": null
+    },
+    {
+      "case_id": "EXTRACTION_SCHEMA_GATE_IMMUTABLE",
+      "suite": "security",
+      "description": "Model output containing price or eligibility overrides is discarded by the schema gate",
+      "status": "passed",
+      "duration_ms": 0.03,
+      "expected": {
+        "ignored_fields": [
+          "unit_price",
+          "eligible",
+          "status"
+        ]
+      },
+      "actual": {
+        "ignored_fields": [
+          "eligible",
+          "status",
+          "unit_price"
+        ]
+      },
+      "error": null
+    },
+    {
+      "case_id": "RAG_CITATION_CORRECTNESS",
+      "suite": "rag",
+      "description": "Policy question correctly cites Demo procurement policy",
+      "status": "passed",
+      "duration_ms": 9.15,
+      "expected": {
+        "cited_document": "Demo procurement policy",
+        "matched": true
+      },
+      "actual": {
+        "citations": [
+          "Demo procurement policy"
+        ],
+        "abstained": false
+      },
+      "error": null
+    },
+    {
+      "case_id": "RAG_ABSTENTION_ON_UNKNOWN",
+      "suite": "rag",
+      "description": "Irrelevant query outside approved demo documents abstains without hallucinating",
+      "status": "passed",
+      "duration_ms": 6.67,
+      "expected": {
+        "abstained": true,
+        "citations_count": 0
+      },
+      "actual": {
+        "abstained": true,
+        "citations_count": 0
+      },
+      "error": null
+    },
+    {
+      "case_id": "BLOCK_PO_OVER_BUDGET",
+      "suite": "guardrails",
+      "description": "Draft total exceeding the RFQ budget cannot be approved",
+      "status": "passed",
+      "duration_ms": 0.0,
+      "expected": {
+        "approval_blocked": true
+      },
+      "actual": {
+        "policy_enforced": true
+      },
+      "error": null
+    }
+  ]
+}

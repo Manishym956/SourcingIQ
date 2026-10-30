@@ -1,0 +1,87 @@
+# Local Obsidian vault (second brain). Keep it off the product repo.
+/SourcingIQ/
+
+# Session logs. The note lives in this directory.
+/logs/
+
+# Markdown policy: only the root README is tracked; notes are ignored
+*.md
+!/README.md
+
+# Local engineering pack
+/SourcingIQ_AI_Engineering_Pack/
+
+# Python build artifacts, caches, and egg-info
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+coverage/
+htmlcov/
+
+# Python virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Node & Next.js
+node_modules/
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+.vercel/
+.turbo/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Test & evaluation run artifacts (keep .gitkeep and latest report)
+app/evals/reports/report_*.json
+playwright-report/
+test-results/
+
+# Secrets and environment configurations
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Logs
+*.log
+
+# OS & Editor files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+*.swp
+*.swo
